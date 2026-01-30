@@ -1,0 +1,24 @@
+# Core ML Libraries
+torch>=2.0.0
+transformers>=4.35.0
+datasets>=2.14.0
+accelerate>=0.24.0
+peft>=0.6.0
+
+# Evaluation Metrics
+evaluate>=0.4.0
+rouge-score>=0.1.2
+sacrebleu>=2.3.1
+scikit-learn>=1.0.0
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+tqdm>=4.65.0
+
+# Configuration
+pyyaml>=6.0
+
+# Utilities
+sentencepiece>=0.1.99
+protobuf>=3.20.0

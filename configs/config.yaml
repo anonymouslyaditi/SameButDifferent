@@ -1,0 +1,125 @@
+# Paraphrase Generation System Configuration
+
+# Model Configuration
+model:
+  # CPG Model (Fine-tuned)
+  cpg:
+    name: "google/flan-t5-large"  # Larger model (780M params) for better quality
+    # Alternative: "google/flan-t5-base" for faster training with less VRAM
+    max_input_length: 512
+    max_output_length: 512
+    min_output_ratio: 0.8  # Minimum 80% of input length
+
+  # LLM Baseline for comparison (uses same model as CPG for fair comparison)
+  llm_baseline:
+    name: "google/flan-t5-large"  # Same model, different prompting strategy
+    max_new_tokens: 512
+
+# Dataset Configuration
+data:
+  # Primary datasets
+  datasets:
+    - name: "paws"
+      subset: "labeled_final"
+      split: "train"
+    - name: "quora"
+      # Using Quora Question Pairs
+
+  # Data splits
+  train_size: 0.8
+  val_size: 0.1
+  test_size: 0.1
+
+  # Preprocessing
+  min_words: 10
+  max_words: 400
+  seed: 42
+
+  # Data Augmentation
+  augmentation:
+    use_back_translation: true
+    # Languages for back-translation (translate English -> lang -> English)
+    back_translation_languages: ["de", "fr", "es"]
+    augmentation_ratio: 0.5  # Augment 50% of training samples
+
+# Training Configuration
+training:
+  # Training hyperparameters
+  batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 3.0e-5  # Slightly lower for larger model
+  weight_decay: 0.01
+  num_epochs: 3
+  warmup_ratio: 0.1
+
+  # Length Penalty Configuration
+  length_penalty:
+    enabled: true
+    alpha: 0.5  # Weight for length penalty in loss
+    target_ratio: 0.9  # Target output/input length ratio
+    penalty_type: "smooth"  # "smooth" or "hard"
+
+  # LoRA configuration (for efficient fine-tuning)
+  use_lora: true
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.1
+    target_modules: ["q", "v"]
+
+  # Checkpointing
+  save_steps: 500
+  eval_steps: 500
+  logging_steps: 100
+
+  # Mixed precision
+  fp16: true
+
+  # Output
+  output_dir: "./outputs/checkpoints"
+  logging_dir: "./outputs/logs"
+
+# Inference Configuration
+inference:
+  # Generation parameters
+  num_beams: 5
+  do_sample: true
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 50
+  no_repeat_ngram_size: 3
+  early_stopping: false  # Disabled to encourage longer outputs
+
+  # Length preservation settings
+  min_length_ratio: 0.8  # Minimum 80% of input length
+  length_penalty: 2.0  # >1 encourages longer outputs
+
+  # Diverse Beam Search Configuration
+  diverse_beam_search:
+    enabled: true
+    num_beam_groups: 5
+    diversity_penalty: 1.0
+    num_return_sequences: 5  # Return multiple diverse paraphrases
+
+  # Batch processing
+  batch_size: 8
+
+# Evaluation Configuration
+evaluation:
+  metrics:
+    - bleu
+    - rouge
+    - semantic_similarity
+
+  # Latency measurement
+  latency:
+    warmup_runs: 3
+    num_runs: 10
+
+  # Output
+  results_dir: "./outputs/evaluation"
+
+# Test Sample (Cover Letter)
+test_sample: |
+  A cover letter is a formal document that accompanies your resume when you apply for a job. It serves as an introduction and provides additional context for your application. Here's a breakdown of its various aspects: Purpose The primary purpose of a cover letter is to introduce yourself to the hiring manager and to provide context for your resume. It allows you to elaborate on your qualifications, skills, and experiences in a way that your resume may not fully capture. It's also an opportunity to express your enthusiasm for the role and the company, and to explain why you would be a good fit. Content A typical cover letter includes the following sections: 1. Header: Includes your contact information, the date, and the employer's contact information. 2. Salutation: A greeting to the hiring manager, preferably personalized with their name. 3. Introduction: Briefly introduces who you are and the position you're applying for. 4. Body: This is the core of your cover letter where you discuss your qualifications, experiences, and skills that make you suitable for the job. You can also mention how you can contribute to the company. 5. Conclusion: Summarizes your points and reiterates your enthusiasm for the role. You can also include a call to action, like asking for an interview. 6. Signature: A polite closing ("Sincerely," "Best regards," etc.) followed by your name. Significance in the Job Application Process The cover letter is often the first document that a hiring manager will read, so it sets the tone for your entire application. It provides you with a chance to stand out among other applicants and to make a strong first impression. Some employers specifically require a cover letter, and failing to include one could result in your application being disregarded. In summary, a cover letter is an essential component of a job application that serves to introduce you, elaborate on your qualifications, and make a compelling case for why you should be considered for the position.
+
