@@ -307,7 +307,7 @@ We use a high-quality paraphrase dataset:
 ## Project Structure
 
 ```
-ParaphraseGenerationSystem/
+SameButDifferent/
 ├── src/
 │   ├── __init__.py              # Package initialization
 │   ├── cli.py                   # Unified CLI entry point
