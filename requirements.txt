@@ -22,3 +22,4 @@ pyyaml>=6.0
 # Utilities
 sentencepiece>=0.1.99
 protobuf>=3.20.0
+matplotlib>=3.7.0
